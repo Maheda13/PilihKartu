@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rangkai Urutan Kartu</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            margin: 0;
+            padding: 0;
+        }
+        h1 { margin-bottom: 10px; font-size: 2em; }
+        h2 { font-weight: normal; color: #ccc; }
+
+        .display-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .display-area {
+            background-color: #444;
+            border: 2px dashed #666;
+            border-radius: 15px;
+            min-height: 220px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto; 
+            justify-content: flex-start;
+            width: 80%;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .display-area::-webkit-scrollbar {
+            display: none;
+        }
+
+        #placeholder-text {
+            color: #888;
+            font-size: 1.2em;
+            width: 100%; 
+            text-align: center;
+        }
+
+        .kartu-terpilih {
+            max-width: 100px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+        
+        .scroll-btn {
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .scroll-btn:hover {
+            background-color: #0097a7;
+        }
+
+        .selection-area {
+            background-color: #222;
+            padding: 25px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .kartu-pilihan {
+            width: 100px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .kartu-pilihan:hover:not(.disabled) {
+            transform: scale(1.1);
+            border-color: #00bcd4;
+        }
+        
+        .kartu-pilihan.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        #reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #f44336;
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        #reset-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <h1></h1>
+        <h2 id="subtitle">Pilih kartu "Start" untuk memulai.</h2>
+    </div>
+
+    <div class="display-container">
+        <button id="scroll-kiri" class="scroll-btn">◄</button>
+        <div class="display-area" id="display-area">
+            <p id="placeholder-text">Urutan kartu akan muncul di sini...</p>
+        </div>
+        <button id="scroll-kanan" class="scroll-btn">►</button>
+    </div>
+    
+    <div>
+        <div class="selection-area">
+            <img class="kartu-pilihan" src="begin.png" alt="Pilih Kartu Begin" data-card="begin">
+            <img class="kartu-pilihan" src="forward.png" alt="Pilih Kartu Forward" data-card="normal">
+            <img class="kartu-pilihan" src="left.png" alt="Pilih Kartu Left" data-card="normal">
+            <img class="kartu-pilihan" src="right.png" alt="Pilih Kartu Right" data-card="normal">
+            <img class="kartu-pilihan" src="end.png" alt="Pilih Kartu End" data-card="end">
+        </div>
+        
+        <button id="reset-button">Reset</button>
+    </div>
+
+    <script>
+        const displayArea = document.getElementById('display-area');
+        const pilihanKartu = document.querySelectorAll('.kartu-pilihan');
+        const resetButton = document.getElementById('reset-button');
+        const placeholder = document.getElementById('placeholder-text');
+        const scrollKiriBtn = document.getElementById('scroll-kiri');
+        const scrollKananBtn = document.getElementById('scroll-kanan');
+        const subtitle = document.getElementById('subtitle');
+
+        let isGameStarted = false;
+        let isGameEnded = false;
+
+        function updateCardStates() {
+            pilihanKartu.forEach(kartu => {
+                const cardType = kartu.dataset.card;
+                if (!isGameStarted) {
+                    if (cardType !== 'begin') {
+                        kartu.classList.add('disabled');
+                    } else {
+                        kartu.classList.remove('disabled');
+                    }
+                } else if (isGameStarted && !isGameEnded) {
+                    if (!kartu.classList.contains('used')) {
+                       kartu.classList.remove('disabled');
+                    }
+                } else if (isGameEnded) {
+                    kartu.classList.add('disabled');
+                }
+            });
+        }
+
+        // --- FUNGSI YANG DIUBAH ADA DI SINI ---
+        function tambahKartuKeDisplay(sumberGambar) {
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+            const kartuBaru = document.createElement('img');
+            kartuBaru.src = sumberGambar;
+            kartuBaru.className = 'kartu-terpilih';
+            displayArea.appendChild(kartuBaru);
+
+            // BARU: Otomatis scroll ke kartu terakhir dengan efek halus
+            displayArea.scrollTo({
+                left: displayArea.scrollWidth,
+                behavior: 'smooth'
+            });
+        }
+
+        pilihanKartu.forEach(kartu => {
+            kartu.addEventListener('click', function() {
+                if (this.classList.contains('disabled')) {
+                    return;
+                }
+                const cardType = this.dataset.card;
+                tambahKartuKeDisplay(this.src);
+                if (cardType === 'begin') {
+                    isGameStarted = true;
+                    this.classList.add('disabled', 'used');
+                    subtitle.textContent = 'Sekarang rangkai perintah Anda...';
+                }
+                if (cardType === 'end') {
+                    isGameEnded = true;
+                    this.classList.add('disabled', 'used');
+                    subtitle.textContent = 'Urutan selesai! Tekan Reset untuk mengulang.';
+                }
+                updateCardStates();
+            });
+        });
+        
+        resetButton.addEventListener('click', function() {
+            while (displayArea.firstChild) {
+                displayArea.removeChild(displayArea.lastChild);
+            }
+            displayArea.appendChild(placeholder);
+            placeholder.style.display = 'block';
+            isGameStarted = false;
+            isGameEnded = false;
+            pilihanKartu.forEach(kartu => {
+                kartu.classList.remove('used');
+            });
+            updateCardStates();
+            subtitle.textContent = 'Pilih kartu "Begin" untuk memulai.';
+        });
+
+        const scrollAmount = 150;
+        scrollKananBtn.addEventListener('click', () => {
+            displayArea.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+        scrollKiriBtn.addEventListener('click', () => {
+            displayArea.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+        
+        updateCardStates();
+    </script>
+
+</body>
+</html>
