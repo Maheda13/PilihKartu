@@ -35,7 +35,7 @@
   h1 span.clap { color: #16a34a; }
   h1 span.noclap { color: #dc2626; }
   .subtitle {
-    font-size: 16px;
+    font-size: 21px;
     color: #78766e;
     margin: 0 0 30px;
     line-height: 1.7;
@@ -45,17 +45,23 @@
   .subtitle .tag-noclap { color: #dc2626; font-weight: 700; }
   .btn-row {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
   }
   .lvl-btn {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
-    text-align: left;
+    justify-content: center;
+    gap: 10px;
+    width: 140px;
+    height: 140px;
+    flex: 0 0 auto;
     font-family: inherit;
-    padding: 16px 20px;
-    border-radius: 16px;
+    padding: 16px;
+    border-radius: 20px;
     border: 2px solid #f0ece0;
     background: #fffdf9;
     cursor: pointer;
@@ -67,9 +73,8 @@
     transform: translateY(-2px);
   }
   .lvl-btn:active { transform: scale(0.98); }
-  .lvl-emoji { font-size: 28px; }
-  .lvl-text-title { font-size: 16px; font-weight: 700; margin: 0; }
-  .lvl-text-sub { font-size: 13px; color: #918e84; margin: 2px 0 0; }
+  .lvl-emoji { font-size: 32px; }
+  .lvl-text-title { font-size: 18px; font-weight: 700; margin: 0; }
 
   #stage { text-align: center; }
   #progress-wrap {
@@ -184,24 +189,15 @@
     <div class="btn-row">
       <button class="lvl-btn" data-level="1">
         <span class="lvl-emoji">🙂</span>
-        <span>
-          <p class="lvl-text-title">Level 1 — Mudah</p>
-          <p class="lvl-text-sub">Warna alami, gampang dibedakan</p>
-        </span>
+        <span class="lvl-text-title">Level 1</span>
       </button>
       <button class="lvl-btn" data-level="2">
         <span class="lvl-emoji">🤔</span>
-        <span>
-          <p class="lvl-text-title">Level 2 — Sedang</p>
-          <p class="lvl-text-sub">Mulai ada variasi warna apel</p>
-        </span>
+        <span class="lvl-text-title">Level 2</span>
       </button>
       <button class="lvl-btn" data-level="3">
         <span class="lvl-emoji">🌀</span>
-        <span>
-          <p class="lvl-text-title">Level 3 — Mengecoh</p>
-          <p class="lvl-text-sub">Fokus ke bentuk, jangan tertipu warna!</p>
-        </span>
+        <span class="lvl-text-title">Level 3</span>
       </button>
     </div>
   </div>
@@ -221,12 +217,16 @@
     <button id="restartBtn">Kembali ke Menu Level</button>
   </div>
 
-  <p class="attribution">Ikon buah oleh <a href="https://twemoji.twitter.com/" target="_blank" rel="noopener">Twemoji</a> (CC BY 4.0)</p>
+  <p class="attribution">Ikon buah oleh <a href="https://twemoji.twitter.com/" target="_blank" rel="noopener">Twemoji</a> (CC BY 4.0), warna dimodifikasi</p>
 </div>
 
 <script>
 (function(){
-  // Ikon dari Twemoji (Twitter), CDN jsDelivr, lisensi CC BY 4.0
+  // Ikon dasar dari Twemoji (Twitter), CDN jsDelivr, lisensi CC BY 4.0
+  // Untuk varian warna yang tidak tersedia sebagai emoji asli (apel oranye,
+  // jeruk merah, jeruk hijau), bentuk emoji asli dipertahankan dan warnanya
+  // digeser memakai CSS filter (hue-rotate/saturate) supaya pemain harus
+  // fokus ke BENTUK, bukan warna.
   const TWEMOJI_BASE = 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/';
   const CP = {
     apel_merah: '1f34e',
@@ -255,9 +255,17 @@
     3: {
       label: 'Level 3',
       pool: [
-        {t:'apel', cp:CP.apel_merah, weight:3},
-        {t:'apel', cp:CP.apel_hijau, weight:3},
-        {t:'jeruk', cp:CP.jeruk, weight:5},
+        // apel asli (merah & hijau)
+        {t:'apel', cp:CP.apel_merah, weight:2},
+        {t:'apel', cp:CP.apel_hijau, weight:2},
+        // apel oranye: bentuk apel, warna digeser ke oranye
+        {t:'apel', cp:CP.apel_merah, weight:2, filter:'hue-rotate(25deg) saturate(1.3)'},
+        // jeruk asli (oranye)
+        {t:'jeruk', cp:CP.jeruk, weight:2},
+        // jeruk merah: bentuk jeruk, warna digeser ke merah
+        {t:'jeruk', cp:CP.jeruk, weight:2, filter:'hue-rotate(-35deg) saturate(1.4)'},
+        // jeruk hijau: bentuk jeruk, warna digeser ke hijau
+        {t:'jeruk', cp:CP.jeruk, weight:2, filter:'hue-rotate(90deg) saturate(1.2)'},
       ]
     },
   };
@@ -296,8 +304,9 @@
     return items;
   }
 
-  function fruitImg(cp){
-    return '<img src="'+TWEMOJI_BASE+cp+'.svg" alt="buah">';
+  function fruitImg(item){
+    const style = item.filter ? ' style="filter:'+item.filter+'"' : '';
+    return '<img src="'+TWEMOJI_BASE+item.cp+'.svg" alt="buah"'+style+'>';
   }
 
   let currentLevel = null, queue = [], idx = 0;
@@ -330,7 +339,7 @@
     const item = queue[idx];
     progressLabel.textContent = (idx+1) + ' / ' + queue.length;
     progressBarFill.style.width = (((idx+1)/queue.length)*100) + '%';
-    fruitDisplay.innerHTML = fruitImg(item.cp);
+    fruitDisplay.innerHTML = fruitImg(item);
   }
 
   document.querySelectorAll('.lvl-btn').forEach(function(btn){
