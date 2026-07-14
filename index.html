@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clap - No Clap | Ice Breaking Game</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafaf7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #262624;
+    padding: 24px;
+  }
+  .container {
+    width: 100%;
+    max-width: 640px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .subtitle {
+    font-size: 16px;
+    color: #6b6a66;
+    margin: 0 0 28px;
+    line-height: 1.6;
+  }
+  .subtitle b { color: #262624; }
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  button {
+    font-family: inherit;
+    font-size: 15px;
+    padding: 12px 22px;
+    border-radius: 12px;
+    border: 1.5px solid #ddd9d0;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  button:hover {
+    border-color: #b0aca0;
+    transform: translateY(-1px);
+  }
+  button:active { transform: scale(0.98); }
+  #nextBtn {
+    background: #1a1a18;
+    color: white;
+    border: none;
+    font-size: 16px;
+    padding: 14px 32px;
+  }
+  #nextBtn:hover { background: #333330; }
+  #progress {
+    font-size: 14px;
+    color: #9a9890;
+    margin: 0 0 16px;
+  }
+  #fruitDisplay {
+    width: 280px;
+    height: 280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  #fruitDisplay img { width: 220px; height: 220px; }
+  .attribution {
+    margin-top: 24px;
+    font-size: 12px;
+    color: #b5b2a8;
+  }
+  .attribution a { color: #b5b2a8; }
+  .reveal-wrap {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #9a9890;
+  }
+  .reveal-wrap label { cursor: pointer; }
+  #answerReveal {
+    display: none;
+    font-weight: 600;
+    margin: 8px 0 0;
+    font-size: 16px;
+  }
+  .answer-clap { color: #16a34a; }
+  .answer-noclap { color: #dc2626; }
+  #endScreen p { font-size: 17px; margin-bottom: 20px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>👏 Clap - No Clap</h1>
+  <p class="subtitle">Tepuk tangan <b>1x</b> saat melihat <b>APEL</b>,<br>jangan tepuk saat melihat <b>JERUK</b>.</p>
+
+  <div id="levelSelect">
+    <div class="btn-row">
+      <button class="lvl-btn" data-level="1">Level 1 — Mudah</button>
+      <button class="lvl-btn" data-level="2">Level 2 — Sedang</button>
+      <button class="lvl-btn" data-level="3">Level 3 — Mengecoh</button>
+    </div>
+  </div>
+
+  <div id="stage" class="hidden">
+    <p id="progress"></p>
+    <div id="fruitDisplay"></div>
+    <div style="margin-top: 24px;">
+      <button id="nextBtn">Gambar Berikutnya ▶</button>
+    </div>
+    <div class="reveal-wrap">
+      <label><input type="checkbox" id="revealToggle"> Tampilkan jawaban (khusus fasilitator)</label>
+      <p id="answerReveal"></p>
+    </div>
+  </div>
+
+  <div id="endScreen" class="hidden">
+    <p>🎉 Level selesai!</p>
+    <button id="restartBtn">Kembali ke Menu Level</button>
+  </div>
+
+  <p class="attribution">Ikon buah oleh <a href="https://twemoji.twitter.com/" target="_blank" rel="noopener">Twemoji</a> (CC BY 4.0)</p>
+</div>
+
+<script>
+(function(){
+  // Ikon dari Twemoji (Twitter), CDN jsDelivr, lisensi CC BY 4.0
+  const TWEMOJI_BASE = 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/';
+  const CP = {
+    apel_merah: '1f34e',
+    apel_hijau: '1f34f',
+    jeruk: '1f34a',
+  };
+
+  const levels = {
+    1: { label: "Level 1", items: [
+      {t:'apel',cp:CP.apel_merah}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah},
+      {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah}, {t:'jeruk',cp:CP.jeruk},
+    ]},
+    2: { label: "Level 2", items: [
+      {t:'apel',cp:CP.apel_merah}, {t:'apel',cp:CP.apel_hijau}, {t:'jeruk',cp:CP.jeruk},
+      {t:'apel',cp:CP.apel_hijau}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah},
+      {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_hijau},
+    ]},
+    3: { label: "Level 3", items: [
+      {t:'apel',cp:CP.apel_hijau}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah},
+      {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_hijau}, {t:'apel',cp:CP.apel_merah},
+      {t:'jeruk',cp:CP.jeruk}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_hijau},
+      {t:'jeruk',cp:CP.jeruk},
+    ]},
+  };
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function fruitImg(cp){
+    return '<img src="'+TWEMOJI_BASE+cp+'.svg" alt="buah" style="width:200px;height:200px;">';
+  }
+
+  let currentLevel = null, queue = [], idx = 0;
+
+  const levelSelect = document.getElementById('levelSelect');
+  const stage = document.getElementById('stage');
+  const endScreen = document.getElementById('endScreen');
+  const fruitDisplay = document.getElementById('fruitDisplay');
+  const progress = document.getElementById('progress');
+  const nextBtn = document.getElementById('nextBtn');
+  const revealToggle = document.getElementById('revealToggle');
+  const answerReveal = document.getElementById('answerReveal');
+  const restartBtn = document.getElementById('restartBtn');
+
+  function startLevel(lvl){
+    currentLevel = lvl;
+    queue = shuffle(levels[lvl].items);
+    idx = 0;
+    levelSelect.classList.add('hidden');
+    endScreen.classList.add('hidden');
+    stage.classList.remove('hidden');
+    showCurrent();
+  }
+
+  function showCurrent(){
+    if(idx >= queue.length){
+      stage.classList.add('hidden');
+      endScreen.classList.remove('hidden');
+      return;
+    }
+    const item = queue[idx];
+    progress.textContent = 'Gambar ' + (idx+1) + ' dari ' + queue.length + ' — ' + levels[currentLevel].label;
+    fruitDisplay.innerHTML = fruitImg(item.cp);
+    answerReveal.textContent = item.t === 'apel' ? 'APEL — peserta HARUS tepuk tangan' : 'JERUK — peserta TIDAK tepuk tangan';
+    answerReveal.className = item.t === 'apel' ? 'answer-clap' : 'answer-noclap';
+    revealToggle.checked = false;
+    answerReveal.style.display = 'none';
+  }
+
+  document.querySelectorAll('.lvl-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ startLevel(parseInt(btn.dataset.level)); });
+  });
+
+  nextBtn.addEventListener('click', function(){ idx++; showCurrent(); });
+
+  revealToggle.addEventListener('change', function(){
+    answerReveal.style.display = revealToggle.checked ? 'block' : 'none';
+  });
+
+  restartBtn.addEventListener('click', function(){
+    endScreen.classList.add('hidden');
+    levelSelect.classList.remove('hidden');
+  });
+
+  // Spasi untuk lanjut ke gambar berikutnya (memudahkan fasilitator)
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'Space' && !stage.classList.contains('hidden')){
+      e.preventDefault();
+      nextBtn.click();
+    }
+  });
+})();
+</script>
+</body>
+</html>
