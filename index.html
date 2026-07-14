@@ -12,122 +12,208 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fafaf7;
+    background: linear-gradient(135deg, #fff1e6 0%, #fef6e4 45%, #eef7f0 100%);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #262624;
     padding: 24px;
   }
-  .container {
+  .card {
     width: 100%;
-    max-width: 640px;
+    max-width: 620px;
     text-align: center;
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 40px 32px;
+    box-shadow: 0 12px 40px rgba(120, 90, 40, 0.12);
   }
   h1 {
-    font-size: 32px;
-    font-weight: 600;
-    margin: 0 0 6px;
+    font-size: 34px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.5px;
   }
+  h1 span.clap { color: #16a34a; }
+  h1 span.noclap { color: #dc2626; }
   .subtitle {
     font-size: 16px;
-    color: #6b6a66;
-    margin: 0 0 28px;
-    line-height: 1.6;
+    color: #78766e;
+    margin: 0 0 30px;
+    line-height: 1.7;
   }
   .subtitle b { color: #262624; }
+  .subtitle .tag-clap { color: #16a34a; font-weight: 700; }
+  .subtitle .tag-noclap { color: #dc2626; font-weight: 700; }
   .btn-row {
     display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
+    flex-direction: column;
+    gap: 12px;
   }
-  button {
+  .lvl-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
     font-family: inherit;
-    font-size: 15px;
-    padding: 12px 22px;
-    border-radius: 12px;
-    border: 1.5px solid #ddd9d0;
-    background: white;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 2px solid #f0ece0;
+    background: #fffdf9;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.18s ease;
   }
-  button:hover {
-    border-color: #b0aca0;
-    transform: translateY(-1px);
+  .lvl-btn:hover {
+    border-color: #f0b84d;
+    background: #fff8ec;
+    transform: translateY(-2px);
   }
-  button:active { transform: scale(0.98); }
-  #nextBtn {
-    background: #1a1a18;
-    color: white;
-    border: none;
-    font-size: 16px;
-    padding: 14px 32px;
+  .lvl-btn:active { transform: scale(0.98); }
+  .lvl-emoji { font-size: 28px; }
+  .lvl-text-title { font-size: 16px; font-weight: 700; margin: 0; }
+  .lvl-text-sub { font-size: 13px; color: #918e84; margin: 2px 0 0; }
+
+  #stage { text-align: center; }
+  #progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px;
   }
-  #nextBtn:hover { background: #333330; }
-  #progress {
-    font-size: 14px;
-    color: #9a9890;
-    margin: 0 0 16px;
+  #progress-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: #f0ece0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  #progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f0b84d, #f97316);
+    border-radius: 8px;
+    transition: width 0.25s ease;
+  }
+  #progress-label {
+    font-size: 13px;
+    color: #918e84;
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: right;
   }
   #fruitDisplay {
-    width: 280px;
-    height: 280px;
+    width: 340px;
+    height: 340px;
+    max-width: 100%;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    background: linear-gradient(180deg, #fffdf9, #fbf6ec);
+    border-radius: 28px;
+    border: 2px solid #f5efe1;
   }
-  #fruitDisplay img { width: 220px; height: 220px; }
-  .attribution {
-    margin-top: 24px;
+  #fruitDisplay img {
+    width: 260px;
+    height: 260px;
+    animation: pop 0.28s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.75); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  #nextBtn {
+    font-family: inherit;
+    margin-top: 26px;
+    background: #1a1a18;
+    color: white;
+    border: none;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 16px 36px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  #nextBtn:hover { background: #333330; transform: translateY(-2px); }
+  #nextBtn:active { transform: scale(0.97); }
+  #keyHint {
+    margin-top: 14px;
     font-size: 12px;
     color: #b5b2a8;
   }
-  .attribution a { color: #b5b2a8; }
-  .reveal-wrap {
-    margin-top: 20px;
-    font-size: 14px;
-    color: #9a9890;
+  kbd {
+    background: #f0ece0;
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: inherit;
+    font-size: 11px;
+    color: #6b6a66;
   }
-  .reveal-wrap label { cursor: pointer; }
-  #answerReveal {
-    display: none;
-    font-weight: 600;
-    margin: 8px 0 0;
+
+  #endScreen p { font-size: 19px; font-weight: 600; margin: 0 0 22px; }
+  #restartBtn {
+    font-family: inherit;
+    background: #16a34a;
+    color: white;
+    border: none;
     font-size: 16px;
+    font-weight: 600;
+    padding: 14px 30px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
   }
-  .answer-clap { color: #16a34a; }
-  .answer-noclap { color: #dc2626; }
-  #endScreen p { font-size: 17px; margin-bottom: 20px; }
+  #restartBtn:hover { background: #128a3e; transform: translateY(-2px); }
+
+  .attribution {
+    margin-top: 28px;
+    font-size: 11px;
+    color: #cbc8bd;
+  }
+  .attribution a { color: #cbc8bd; }
   .hidden { display: none; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>👏 Clap - No Clap</h1>
-  <p class="subtitle">Tepuk tangan <b>1x</b> saat melihat <b>APEL</b>,<br>jangan tepuk saat melihat <b>JERUK</b>.</p>
+<div class="card">
 
   <div id="levelSelect">
+    <h1>👏 Clap <span class="clap">-</span> No Clap</h1>
+    <p class="subtitle">
+      Tepuk tangan <b>1x</b> saat melihat <span class="tag-clap">APEL</span>,<br>
+      jangan tepuk saat melihat <span class="tag-noclap">JERUK</span>.
+    </p>
     <div class="btn-row">
-      <button class="lvl-btn" data-level="1">Level 1 — Mudah</button>
-      <button class="lvl-btn" data-level="2">Level 2 — Sedang</button>
-      <button class="lvl-btn" data-level="3">Level 3 — Mengecoh</button>
+      <button class="lvl-btn" data-level="1">
+        <span class="lvl-emoji">🙂</span>
+        <span>
+          <p class="lvl-text-title">Level 1 — Mudah</p>
+          <p class="lvl-text-sub">Warna alami, gampang dibedakan</p>
+        </span>
+      </button>
+      <button class="lvl-btn" data-level="2">
+        <span class="lvl-emoji">🤔</span>
+        <span>
+          <p class="lvl-text-title">Level 2 — Sedang</p>
+          <p class="lvl-text-sub">Mulai ada variasi warna apel</p>
+        </span>
+      </button>
+      <button class="lvl-btn" data-level="3">
+        <span class="lvl-emoji">🌀</span>
+        <span>
+          <p class="lvl-text-title">Level 3 — Mengecoh</p>
+          <p class="lvl-text-sub">Fokus ke bentuk, jangan tertipu warna!</p>
+        </span>
+      </button>
     </div>
   </div>
 
   <div id="stage" class="hidden">
-    <p id="progress"></p>
+    <div id="progress-wrap">
+      <div id="progress-bar-bg"><div id="progress-bar-fill" style="width:0%;"></div></div>
+      <span id="progress-label"></span>
+    </div>
     <div id="fruitDisplay"></div>
-    <div style="margin-top: 24px;">
-      <button id="nextBtn">Gambar Berikutnya ▶</button>
-    </div>
-    <div class="reveal-wrap">
-      <label><input type="checkbox" id="revealToggle"> Tampilkan jawaban (khusus fasilitator)</label>
-      <p id="answerReveal"></p>
-    </div>
+    <button id="nextBtn">Gambar Berikutnya ▶</button>
+    <p id="keyHint">Tekan <kbd>spasi</kbd> atau <kbd>→</kbd> untuk lanjut</p>
   </div>
 
   <div id="endScreen" class="hidden">
@@ -148,35 +234,70 @@
     jeruk: '1f34a',
   };
 
-  const levels = {
-    1: { label: "Level 1", items: [
-      {t:'apel',cp:CP.apel_merah}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah},
-      {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah}, {t:'jeruk',cp:CP.jeruk},
-    ]},
-    2: { label: "Level 2", items: [
-      {t:'apel',cp:CP.apel_merah}, {t:'apel',cp:CP.apel_hijau}, {t:'jeruk',cp:CP.jeruk},
-      {t:'apel',cp:CP.apel_hijau}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah},
-      {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_hijau},
-    ]},
-    3: { label: "Level 3", items: [
-      {t:'apel',cp:CP.apel_hijau}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_merah},
-      {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_hijau}, {t:'apel',cp:CP.apel_merah},
-      {t:'jeruk',cp:CP.jeruk}, {t:'jeruk',cp:CP.jeruk}, {t:'apel',cp:CP.apel_hijau},
-      {t:'jeruk',cp:CP.jeruk},
-    ]},
+  const QUESTIONS_PER_LEVEL = 25;
+
+  const levelPools = {
+    1: {
+      label: 'Level 1',
+      pool: [
+        {t:'apel', cp:CP.apel_merah, weight:5},
+        {t:'jeruk', cp:CP.jeruk, weight:5},
+      ]
+    },
+    2: {
+      label: 'Level 2',
+      pool: [
+        {t:'apel', cp:CP.apel_merah, weight:3},
+        {t:'apel', cp:CP.apel_hijau, weight:3},
+        {t:'jeruk', cp:CP.jeruk, weight:5},
+      ]
+    },
+    3: {
+      label: 'Level 3',
+      pool: [
+        {t:'apel', cp:CP.apel_merah, weight:3},
+        {t:'apel', cp:CP.apel_hijau, weight:3},
+        {t:'jeruk', cp:CP.jeruk, weight:5},
+      ]
+    },
   };
 
-  function shuffle(arr){
-    const a = arr.slice();
-    for(let i=a.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [a[i],a[j]]=[a[j],a[i]];
+  function weightedPick(pool){
+    const total = pool.reduce(function(s,p){ return s + p.weight; }, 0);
+    let r = Math.random() * total;
+    for(let i=0;i<pool.length;i++){
+      r -= pool[i].weight;
+      if(r <= 0) return pool[i];
     }
-    return a;
+    return pool[pool.length-1];
+  }
+
+  function buildQuestions(lvl){
+    const pool = levelPools[lvl].pool;
+    const items = [];
+    let lastType = null;
+    let streak = 0;
+    for(let i=0;i<QUESTIONS_PER_LEVEL;i++){
+      let pick = weightedPick(pool);
+      // batasi maksimal 3 kali berturut-turut tipe yang sama biar tidak monoton
+      if(pick.t === lastType){
+        streak++;
+        if(streak >= 3){
+          const alt = pool.filter(function(p){ return p.t !== lastType; });
+          if(alt.length) pick = alt[Math.floor(Math.random()*alt.length)];
+          streak = 0;
+        }
+      } else {
+        streak = 0;
+      }
+      lastType = pick.t;
+      items.push(pick);
+    }
+    return items;
   }
 
   function fruitImg(cp){
-    return '<img src="'+TWEMOJI_BASE+cp+'.svg" alt="buah" style="width:200px;height:200px;">';
+    return '<img src="'+TWEMOJI_BASE+cp+'.svg" alt="buah">';
   }
 
   let currentLevel = null, queue = [], idx = 0;
@@ -185,15 +306,14 @@
   const stage = document.getElementById('stage');
   const endScreen = document.getElementById('endScreen');
   const fruitDisplay = document.getElementById('fruitDisplay');
-  const progress = document.getElementById('progress');
+  const progressBarFill = document.getElementById('progress-bar-fill');
+  const progressLabel = document.getElementById('progress-label');
   const nextBtn = document.getElementById('nextBtn');
-  const revealToggle = document.getElementById('revealToggle');
-  const answerReveal = document.getElementById('answerReveal');
   const restartBtn = document.getElementById('restartBtn');
 
   function startLevel(lvl){
     currentLevel = lvl;
-    queue = shuffle(levels[lvl].items);
+    queue = buildQuestions(lvl);
     idx = 0;
     levelSelect.classList.add('hidden');
     endScreen.classList.add('hidden');
@@ -208,12 +328,9 @@
       return;
     }
     const item = queue[idx];
-    progress.textContent = 'Gambar ' + (idx+1) + ' dari ' + queue.length + ' — ' + levels[currentLevel].label;
+    progressLabel.textContent = (idx+1) + ' / ' + queue.length;
+    progressBarFill.style.width = (((idx+1)/queue.length)*100) + '%';
     fruitDisplay.innerHTML = fruitImg(item.cp);
-    answerReveal.textContent = item.t === 'apel' ? 'APEL — peserta HARUS tepuk tangan' : 'JERUK — peserta TIDAK tepuk tangan';
-    answerReveal.className = item.t === 'apel' ? 'answer-clap' : 'answer-noclap';
-    revealToggle.checked = false;
-    answerReveal.style.display = 'none';
   }
 
   document.querySelectorAll('.lvl-btn').forEach(function(btn){
@@ -222,18 +339,13 @@
 
   nextBtn.addEventListener('click', function(){ idx++; showCurrent(); });
 
-  revealToggle.addEventListener('change', function(){
-    answerReveal.style.display = revealToggle.checked ? 'block' : 'none';
-  });
-
   restartBtn.addEventListener('click', function(){
     endScreen.classList.add('hidden');
     levelSelect.classList.remove('hidden');
   });
 
-  // Spasi untuk lanjut ke gambar berikutnya (memudahkan fasilitator)
   document.addEventListener('keydown', function(e){
-    if(e.code === 'Space' && !stage.classList.contains('hidden')){
+    if((e.code === 'Space' || e.code === 'ArrowRight') && !stage.classList.contains('hidden')){
       e.preventDefault();
       nextBtn.click();
     }
